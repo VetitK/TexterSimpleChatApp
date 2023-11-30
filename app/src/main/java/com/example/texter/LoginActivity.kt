@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.texter.repository.AppPeferences
 import com.example.texter.ui.theme.TexterTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -36,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.database
 
 class LoginActivity : ComponentActivity() {
+
     private val auth = FirebaseAuth.getInstance()
     val db =
         FirebaseDatabase.getInstance("https://texter-56cc1-default-rtdb.asia-southeast1.firebasedatabase.app/")
@@ -65,6 +67,13 @@ class LoginActivity : ComponentActivity() {
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var isLogin by remember { mutableStateOf(true) }
+        var sharedPref = AppPeferences(this)
+        LaunchedEffect(Unit) {
+            val systemPrefEmail = sharedPref.getEmail()
+            if (systemPrefEmail != null) {
+                    email = systemPrefEmail
+            }
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -250,6 +259,8 @@ class LoginActivity : ComponentActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    var sharedPref = AppPeferences(this)
+                    sharedPref.setEmail(email)
                     // Login successful
                     Toast.makeText(
                         this,
