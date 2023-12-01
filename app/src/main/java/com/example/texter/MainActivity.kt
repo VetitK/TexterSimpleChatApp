@@ -60,13 +60,13 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.initialize
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class MainActivity : ComponentActivity() {
-
     private val auth = FirebaseAuth.getInstance()
     private val currentUser = auth.currentUser
     private val db = FirebaseDatabase.getInstance("https://texter-56cc1-default-rtdb.asia-southeast1.firebasedatabase.app/")
@@ -343,8 +343,8 @@ class MainActivity : ComponentActivity() {
                     LazyColumn(
                         modifier =
                         Modifier
-                            .fillMaxWidth()
-                            .weight(1.0f),
+                            .fillMaxWidth(),
+//                            .weight(1.0f),
                         state = listState
                     ) {
                         if (messages.isEmpty()) {
@@ -402,21 +402,7 @@ class MainActivity : ComponentActivity() {
 
         }
 
-        private fun sendMessage(chat: Chat, text: String) {
-            // Get a reference to the chat in the database
-            val chatReference = msgRef.child(chat.chatId)
 
-            // Create a new message
-            val message = Message(currentUser?.displayName, currentUser!!.uid, text, System.currentTimeMillis())
-
-            // Add the message to the chat in the database
-            val messageReference = chatReference.push()
-            messageReference.setValue(message)
-
-            // Create timestamp and text for most recent message of two people
-            chat.getMessages()
-
-        }
 
         @RequiresApi(Build.VERSION_CODES.O)
         @Preview
@@ -427,3 +413,28 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+fun sendMessage(chat: Chat, text: String): Boolean {
+     val auth = FirebaseAuth.getInstance()
+     val currentUser = auth.currentUser
+     val db = FirebaseDatabase.getInstance("https://texter-56cc1-default-rtdb.asia-southeast1.firebasedatabase.app/")
+     val userRef = db.getReference("users")
+     val msgRef = db.getReference("messages")
+    try {
+        // Get a reference to the chat in the database
+        val chatReference = msgRef.child(chat.chatId)
+
+        // Create a new message
+        val message = Message(currentUser?.displayName, currentUser!!.uid, text, System.currentTimeMillis())
+
+        // Add the message to the chat in the database
+        val messageReference = chatReference.push()
+        messageReference.setValue(message)
+
+        // Create timestamp and text for most recent message of two people
+        chat.getMessages()
+        return true
+    } catch (err: Exception) {
+        return false
+    }
+}

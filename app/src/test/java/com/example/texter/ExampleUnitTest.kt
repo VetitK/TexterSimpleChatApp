@@ -1,17 +1,28 @@
 package com.example.texter
 
+
+import com.example.texter.data.Chat
+import org.junit.Assert.assertEquals
 import org.junit.Test
+import com.example.texter.data.User
+import org.junit.Assert.assertNotEquals
 
-import org.junit.Assert.*
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
+class ChatFunctionalityTest {
+    private val user = User("testId1", "vetit@gmail.com", "Vetit")
+    private val chat = Chat(user.uid, "testId2", {}, "Due")
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun testValidChatId() {
+        assertEquals(chat.chatId, user.uid + "-" + chat.user2Id)
+    }
+
+    @Test
+    fun testNotEqualUid() {
+        assertNotEquals(user.uid, chat.user2Id)
+    }
+
+    @Test
+    fun testUsernameNotEqual() {
+        assertNotEquals(user.username, chat.user2Name)
     }
 }
