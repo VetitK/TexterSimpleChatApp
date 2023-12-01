@@ -68,8 +68,8 @@ class LoginActivity : ComponentActivity() {
         var password by remember { mutableStateOf("") }
         var isLogin by remember { mutableStateOf(true) }
         var sharedPref = AppPeferences(this)
-        LaunchedEffect(Unit) {
-            val systemPrefEmail = sharedPref.getEmail()
+        val systemPrefEmail = sharedPref.getEmail()
+        LaunchedEffect(systemPrefEmail) {
             if (systemPrefEmail != null) {
                     email = systemPrefEmail
             }
